@@ -1,6 +1,7 @@
 package application.usecases;
 
 import application.dto.SinhVienRequest;
+import application.mapper.SinhVienMapper;
 import domain.models.SinhVien;
 import domain.repositories.ISinhVienRepository;
 
@@ -18,15 +19,7 @@ public class ThemSinhVienUseCase {
         if (svRepo.findById(svReq.getMaSv()) != null) {
             throw new IllegalArgumentException("Mã sinh viên đã tồn tại");
         }
-        SinhVien sv = new SinhVien(
-                svReq.getMaSv(),
-                svReq.getHoTen(),
-                svReq.getSdt(),
-                svReq.getNgaySinh(),
-                svReq.getEmail(),
-                svReq.getMaLop(),
-                svReq.getMaKhoa()
-        );
+        SinhVien sv = SinhVienMapper.toEntity(svReq);
         svRepo.save(sv);
     }
 }

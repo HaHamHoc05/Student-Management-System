@@ -20,7 +20,7 @@ public class SinhVien {
             throw new IllegalArgumentException("Họ Tên không được để trống");
         }
 
-        if (sdt == null && sdt.matches("^0\\d{9}$") ) {
+        if (sdt != null && sdt.matches("^0\\d{9}$") ) {
             throw new IllegalArgumentException("Số điện thoại không hợp lệ");
         }
 
