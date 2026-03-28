@@ -5,7 +5,6 @@ import application.mapper.SinhVienMapper;
 import domain.models.SinhVien;
 import domain.repositories.ISinhVienRepository;
 
-import java.time.LocalDate;
 
 public class ThemSinhVienUseCase {
     private final ISinhVienRepository svRepo;
