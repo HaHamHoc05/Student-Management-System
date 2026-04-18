@@ -23,7 +23,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // Tạm tắt CSRF để dễ test API qua Postman
                 .authorizeHttpRequests(auth -> auth
                         // Cấp quyền truy cập tự do cho các file tĩnh hoặc trang đăng ký
-                        .requestMatchers("/css/**", "/js/**", "/auth/**").permitAll()
+                        .requestMatchers("/css/**", "/js/**", "/auth/**", "/register").permitAll()
 
                         // Phân quyền cụ thể
                         .requestMatchers("/classes/**", "/teachers/**").hasRole("ADMIN")

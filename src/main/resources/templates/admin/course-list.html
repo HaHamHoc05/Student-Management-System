@@ -1,0 +1,27 @@
+<div th:replace="~{admin/layout :: layout(~{::content})}">
+    <div th:fragment="content">
+        <h3>Quản lý Môn học</h3>
+        <div class="row">
+            <div class="col-md-4">
+                <form th:action="@{/admin/courses/save}" method="post" class="card p-3 shadow-sm">
+                    <input type="text" name="courseCode" class="form-control mb-2" placeholder="Mã môn" required>
+                    <input type="text" name="courseName" class="form-control mb-2" placeholder="Tên môn" required>
+                    <input type="number" name="credit" class="form-control mb-2" placeholder="Số tín chỉ" required>
+                    <button type="submit" class="btn btn-primary">Thêm môn học</button>
+                </form>
+            </div>
+            <div class="col-md-8">
+                <table class="table table-bordered">
+                    <thead class="table-dark">
+                    <tr><th>Mã môn</th><th>Tên môn</th><th>Tín chỉ</th></tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="c : ${courses}">
+                        <td th:text="${c.courseCode}"></td><td th:text="${c.courseName}"></td><td th:text="${c.credit}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

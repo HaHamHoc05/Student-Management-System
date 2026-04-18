@@ -19,25 +19,26 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
     }
 
+    // Hiển thị trang đăng ký
     @GetMapping("/register")
-    public String showRegisterForm() {
-        return "register"; // Trả về file register.html
+    public String showRegisterPage(Model model) {
+        model.addAttribute("account", new Account());
+        return "register"; // Trỏ tới templates/register.html
     }
 
     @PostMapping("/register")
-    public String register(@ModelAttribute("account") Account account, Model model) {
+    public String register(@ModelAttribute Account account, Model model) {
         if (accountRepository.existsByUsername(account.getUsername())) {
             model.addAttribute("error", "Tên đăng nhập đã tồn tại!");
             return "register";
         }
 
         account.setPassword(passwordEncoder.encode(account.getPassword()));
-
         if (account.getRole() == null || account.getRole().isEmpty()) {
             account.setRole("ROLE_STUDENT");
         }
 
         accountRepository.save(account);
-        return "redirect:/login?success"; // Đăng ký xong về trang login
+        return "redirect:/login?registered=true";
     }
 }

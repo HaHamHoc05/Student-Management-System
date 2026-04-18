@@ -18,13 +18,15 @@
             <a href="/admin/students">🎓 Quản lý Sinh viên</a>
             <a href="/admin/classes">🏫 Quản lý Lớp học</a>
             <a href="/admin/schedule">📅 Quản lý Lịch học</a>
+            <a href="/admin/courses">📚 Quản lý Môn học</a>
+            <a href="/admin/teachers">👨‍🏫 Quản lý Giảng viên</a>
             <hr>
             <form th:action="@{/logout}" method="post">
                 <button class="btn btn-danger w-100" type="submit">Đăng xuất</button>
             </form>
         </div>
         <div class="col-md-10 p-4">
-            <div th:replace="~{${content}}"></div>
+            <div th:replace="${content}"></div>
         </div>
     </div>
 </div>
