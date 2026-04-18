@@ -3,36 +3,41 @@ package com.studentmanagement.controller;
 import com.studentmanagement.model.Account;
 import com.studentmanagement.repository.AccountRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 @RequestMapping("/auth")
 public class AuthController {
 
     private final AccountRepository accountRepository;
-    private final PasswordEncoder passwordEncoder; // Đã được cấu hình là @Bean trong SecurityConfig
+    private final PasswordEncoder passwordEncoder;
 
     public AuthController(AccountRepository accountRepository, PasswordEncoder passwordEncoder) {
         this.accountRepository = accountRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
+    @GetMapping("/register")
+    public String showRegisterForm() {
+        return "register"; // Trả về file register.html
+    }
+
     @PostMapping("/register")
-    public String register(@RequestBody Account account) {
-        // Kiểm tra xem username đã tồn tại chưa
+    public String register(@ModelAttribute("account") Account account, Model model) {
         if (accountRepository.existsByUsername(account.getUsername())) {
-            return "Lỗi: Tên đăng nhập đã tồn tại!";
+            model.addAttribute("error", "Tên đăng nhập đã tồn tại!");
+            return "register";
         }
 
-        // Mã hóa mật khẩu trước khi lưu xuống database
         account.setPassword(passwordEncoder.encode(account.getPassword()));
 
-        // Nếu client không gửi lên role, mặc định cấp quyền sinh viên
         if (account.getRole() == null || account.getRole().isEmpty()) {
             account.setRole("ROLE_STUDENT");
         }
 
         accountRepository.save(account);
-        return "Đăng ký thành công!";
+        return "redirect:/login?success"; // Đăng ký xong về trang login
     }
 }
