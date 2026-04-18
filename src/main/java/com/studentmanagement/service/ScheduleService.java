@@ -15,13 +15,27 @@ public class ScheduleService {
         this.repo = repo;
     }
 
-    // 📋 GET ALL
     public List<Schedule> getAll() {
         return repo.findAll();
     }
 
-    // ➕ CREATE
     public Schedule create(Schedule s) {
         return repo.save(s);
+    }
+
+    public Schedule getById(Long id) {
+        return repo.findById(id).orElseThrow(() -> new RuntimeException("Không tìm thấy lịch học!"));
+    }
+
+    public List<Schedule> getSchedulesByClass(Long classId) {
+        return repo.findByClassRoomId(classId);
+    }
+
+    public List<Schedule> getSchedulesByTeacher(String teacherCode) {
+        return repo.findByTeacher_TeacherCode(teacherCode);
+    }
+
+    public void delete(Long id) {
+        repo.deleteById(id);
     }
 }

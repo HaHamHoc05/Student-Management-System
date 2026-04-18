@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+// ĐÃ XÓA: import com.studentmanagement.model.Schedule → không dùng ở đâu trong class này
 @Service
 public class StudentService {
 
@@ -29,7 +30,6 @@ public class StudentService {
 
     public Student update(Long id, Student newStudent) {
         Student s = repo.findById(id).orElseThrow();
-
         s.setStudentCode(newStudent.getStudentCode());
         s.setFullName(newStudent.getFullName());
         s.setEmail(newStudent.getEmail());
@@ -37,11 +37,19 @@ public class StudentService {
         s.setGender(newStudent.getGender());
         s.setDob(newStudent.getDob());
         s.setClassRoom(newStudent.getClassRoom());
-
         return repo.save(s);
     }
 
     public void delete(Long id) {
         repo.deleteById(id);
+    }
+
+    public Student getByCode(String code) {
+        return repo.findByStudentCode(code)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy sinh viên với mã: " + code));
+    }
+
+    public List<Student> getByClass(Long classId) {
+        return repo.findByClassRoomId(classId);
     }
 }

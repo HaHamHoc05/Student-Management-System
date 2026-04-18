@@ -12,7 +12,11 @@
 
     <div th:if="${error}" class="alert alert-danger text-center" th:text="${error}"></div>
 
-    <form th:action="@{/register}" method="post">
+    <!--
+        ĐÃ SỬA: action="/register" → action="/auth/register"
+        BUG CŨ: form submit về POST /register nhưng AuthController chỉ xử lý POST /auth/register → 404
+    -->
+    <form th:action="@{/auth/register}" method="post">
         <div class="mb-3">
             <label class="form-label">Tên đăng nhập (Mã SV/GV)</label>
             <input type="text" class="form-control" name="username" required>

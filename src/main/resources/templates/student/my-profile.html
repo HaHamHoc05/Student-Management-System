@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thông tin cá nhân</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .avatar-circle {
+            width: 90px; height: 90px; border-radius: 50%;
+            background: linear-gradient(135deg, #0d6efd, #6610f2);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.5rem; color: white; font-weight: bold;
+        }
+        .info-row { border-bottom: 1px solid #f0f0f0; padding: 12px 0; }
+        .info-row:last-child { border-bottom: none; }
+        .info-label { color: #6c757d; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; }
+    </style>
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-dark bg-primary shadow-sm">
+    <div class="container-fluid">
+        <span class="navbar-brand fw-bold">🎓 STUDENT PORTAL</span>
+        <div class="d-flex gap-2">
+            <a href="/student/home" class="btn btn-outline-light btn-sm">🏠 Trang chủ</a>
+            <form th:action="@{/logout}" method="post" class="d-inline">
+                <button class="btn btn-outline-light btn-sm">Đăng xuất</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4" style="max-width: 700px;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold mb-0">👤 Thông Tin Cá Nhân</h4>
+        <a href="/student/home" class="btn btn-secondary btn-sm">⬅ Quay lại</a>
+    </div>
+
+    <div class="card shadow">
+        <!-- Header với avatar -->
+        <div class="card-header bg-primary text-white p-4">
+            <div class="d-flex align-items-center gap-3">
+                <div class="avatar-circle"
+                     th:text="${#strings.substring(student.fullName, 0, 1)}">S</div>
+                <div>
+                    <h5 class="mb-0 fw-bold" th:text="${student.fullName}">Họ tên</h5>
+                    <small th:text="'Mã SV: ' + ${student.studentCode}" class="opacity-75"></small>
+                    <br>
+                    <span class="badge bg-light text-primary mt-1"
+                          th:text="${student.classRoom != null ? student.classRoom.className : 'Chưa có lớp'}"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Thông tin chi tiết -->
+        <div class="card-body px-4">
+            <div class="info-row d-flex justify-content-between align-items-center">
+                <span class="info-label">🪪 Mã sinh viên</span>
+                <span class="fw-bold text-primary" th:text="${student.studentCode}"></span>
+            </div>
+            <div class="info-row d-flex justify-content-between align-items-center">
+                <span class="info-label">📛 Họ và tên</span>
+                <span class="fw-bold" th:text="${student.fullName}"></span>
+            </div>
+            <div class="info-row d-flex justify-content-between align-items-center">
+                <span class="info-label">🎂 Ngày sinh</span>
+                <span th:text="${student.dob != null ? student.dob : 'Chưa cập nhật'}"
+                      th:classappend="${student.dob == null ? 'text-muted fst-italic' : 'fw-bold'}"></span>
+            </div>
+            <div class="info-row d-flex justify-content-between align-items-center">
+                <span class="info-label">⚧ Giới tính</span>
+                <span th:text="${student.gender != null ? student.gender : 'Chưa cập nhật'}"
+                      th:classappend="${student.gender == null ? 'text-muted fst-italic' : 'fw-bold'}"></span>
+            </div>
+            <div class="info-row d-flex justify-content-between align-items-center">
+                <span class="info-label">📧 Email</span>
+                <span th:text="${student.email != null ? student.email : 'Chưa cập nhật'}"
+                      th:classappend="${student.email == null ? 'text-muted fst-italic' : ''}"></span>
+            </div>
+            <div class="info-row d-flex justify-content-between align-items-center">
+                <span class="info-label">📱 Số điện thoại</span>
+                <span th:text="${student.phone != null ? student.phone : 'Chưa cập nhật'}"
+                      th:classappend="${student.phone == null ? 'text-muted fst-italic' : ''}"></span>
+            </div>
+            <div class="info-row d-flex justify-content-between align-items-center">
+                <span class="info-label">🏫 Lớp học</span>
+                <span class="badge bg-info text-dark fs-6"
+                      th:text="${student.classRoom != null ? student.classRoom.className : 'Chưa phân lớp'}"></span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="card-footer text-muted text-center small">
+            Để thay đổi thông tin, vui lòng liên hệ Phòng Đào Tạo
+        </div>
+    </div>
+
+    <!-- Quick links -->
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <a href="/student/my-grades" class="card text-decoration-none text-center p-3 shadow-sm">
+                <div class="fs-2">📊</div>
+                <small class="fw-bold text-primary">Xem điểm</small>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="/student/my-schedule" class="card text-decoration-none text-center p-3 shadow-sm">
+                <div class="fs-2">📅</div>
+                <small class="fw-bold text-success">Lịch học</small>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="/student/my-attendance" class="card text-decoration-none text-center p-3 shadow-sm">
+                <div class="fs-2">📌</div>
+                <small class="fw-bold text-warning">Điểm danh</small>
+            </a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,26 +1,64 @@
 <div th:replace="~{admin/layout :: layout(~{::content})}">
     <div th:fragment="content">
-        <h3>Quản lý Môn học</h3>
+        <h4 class="fw-bold mb-3">📚 Quản Lý Môn Học</h4>
         <div class="row">
+            <!-- Form thêm/sửa môn học -->
             <div class="col-md-4">
-                <form th:action="@{/admin/courses/save}" method="post" class="card p-3 shadow-sm">
-                    <input type="text" name="courseCode" class="form-control mb-2" placeholder="Mã môn" required>
-                    <input type="text" name="courseName" class="form-control mb-2" placeholder="Tên môn" required>
-                    <input type="number" name="credit" class="form-control mb-2" placeholder="Số tín chỉ" required>
-                    <button type="submit" class="btn btn-primary">Thêm môn học</button>
-                </form>
+                <div class="card p-3 shadow-sm">
+                    <h5 th:text="${course.id != null ? '✏️ Cập nhật Môn học' : '➕ Thêm Môn học'}"></h5>
+                    <form th:action="@{/admin/courses/save}" th:object="${course}" method="post">
+                        <!-- Hidden ID để phân biệt create/update -->
+                        <input type="hidden" th:field="*{id}">
+                        <input type="text" th:field="*{courseCode}" class="form-control mb-2"
+                               placeholder="Mã môn (VD: CNTT101)" required>
+                        <input type="text" th:field="*{courseName}" class="form-control mb-2"
+                               placeholder="Tên môn học" required>
+                        <input type="number" th:field="*{credit}" class="form-control mb-2"
+                               placeholder="Số tín chỉ" min="1" max="10" required>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary flex-fill">
+                                <span th:text="${course.id != null ? 'Cập nhật' : 'Thêm môn học'}"></span>
+                            </button>
+                            <a th:if="${course.id != null}" href="/admin/courses"
+                               class="btn btn-secondary">Hủy</a>
+                        </div>
+                    </form>
+                </div>
             </div>
+
+            <!-- Bảng danh sách môn học -->
             <div class="col-md-8">
-                <table class="table table-bordered">
-                    <thead class="table-dark">
-                    <tr><th>Mã môn</th><th>Tên môn</th><th>Tín chỉ</th></tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="c : ${courses}">
-                        <td th:text="${c.courseCode}"></td><td th:text="${c.courseName}"></td><td th:text="${c.credit}"></td>
-                    </tr>
-                    </tbody>
-                </table>
+                <div class="card shadow-sm">
+                    <table class="table table-bordered mb-0">
+                        <thead class="table-dark">
+                        <tr>
+                            <th>Mã môn</th>
+                            <th>Tên môn</th>
+                            <th class="text-center">Tín chỉ</th>
+                            <th class="text-center">Hành động</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="c : ${courses}" class="align-middle">
+                            <td><span class="badge bg-secondary" th:text="${c.courseCode}"></span></td>
+                            <td class="fw-bold" th:text="${c.courseName}"></td>
+                            <td class="text-center" th:text="${c.credit}"></td>
+                            <td class="text-center">
+                                <!-- ĐÃ THÊM: nút Sửa môn học -->
+                                <a th:href="@{/admin/courses/edit/{id}(id=${c.id})}"
+                                   class="btn btn-warning btn-sm">✏️ Sửa</a>
+                                <!-- ĐÃ SỬA: redirect bug từ /admin/teachers → /admin/courses -->
+                                <a th:href="@{/admin/courses/delete/{id}(id=${c.id})}"
+                                   class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Xóa môn học này?')">🗑 Xóa</a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(courses)}">
+                            <td colspan="4" class="text-center text-muted py-3">Chưa có môn học nào</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

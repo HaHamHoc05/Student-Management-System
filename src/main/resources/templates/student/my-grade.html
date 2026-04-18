@@ -1,28 +1,88 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"></head>
+<head>
+    <meta charset="UTF-8">
+    <title>Bảng điểm cá nhân</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
 <body class="bg-light">
-<div class="container mt-5">
-    <h3 class="text-center text-primary mb-4">BẢNG ĐIỂM CÁ NHÂN</h3>
-    <a href="/student/home" class="btn btn-secondary mb-3">⬅ Quay lại</a>
-    <div class="card shadow">
+<nav class="navbar navbar-dark bg-primary shadow-sm">
+    <div class="container-fluid">
+        <span class="navbar-brand fw-bold">🎓 STUDENT PORTAL</span>
+        <div class="d-flex gap-2">
+            <a href="/student/home" class="btn btn-outline-light btn-sm">🏠 Trang chủ</a>
+            <form th:action="@{/logout}" method="post" class="d-inline">
+                <button class="btn btn-outline-light btn-sm">Đăng xuất</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold mb-0">📊 Bảng Điểm Cá Nhân</h4>
+            <small class="text-muted">Kết quả học tập theo từng môn</small>
+        </div>
+        <a href="/student/home" class="btn btn-secondary btn-sm">⬅ Quay lại</a>
+    </div>
+
+    <!-- Thông báo nếu chưa có điểm -->
+    <div th:if="${#lists.isEmpty(grades)}" class="alert alert-info text-center py-4">
+        <h6>📭 Chưa có điểm nào được nhập</h6>
+        <p class="mb-0 text-muted">Hệ thống sẽ cập nhật khi giảng viên nhập điểm.</p>
+    </div>
+
+    <div th:unless="${#lists.isEmpty(grades)}" class="card shadow">
         <table class="table table-hover mb-0">
             <thead class="table-primary">
-            <tr><th>Mã môn</th><th>Tên môn</th><th>TC</th><th>Giữa kỳ</th><th>Cuối kỳ</th><th>Tổng điểm</th><th>Điểm chữ</th><th>GPA</th></tr>
+            <tr class="text-center">
+                <th class="text-start ps-3">Mã môn</th>
+                <th class="text-start">Tên môn</th>
+                <th>TC</th>
+                <th>Giữa kỳ</th>
+                <th>Cuối kỳ</th>
+                <th>Tổng điểm</th>
+                <th>Điểm chữ</th>
+                <th>GPA (hệ 4)</th>
+            </tr>
             </thead>
             <tbody>
-            <tr th:each="g : ${grades}">
-                <td th:text="${g.courseCode}"></td>
-                <td th:text="${g.courseName}"></td>
+            <!-- ĐÃ SỬA: xóa 3 cột <td> trùng lặp (courseName x2, total x2, absentWithPermission/absentWithoutPermission) -->
+            <tr th:each="g : ${grades}" class="text-center align-middle">
+                <td class="text-start ps-3">
+                    <span class="badge bg-secondary" th:text="${g.courseCode}"></span>
+                </td>
+                <td class="text-start fw-bold" th:text="${g.courseName}"></td>
                 <td th:text="${g.credit}"></td>
                 <td th:text="${g.midTerm}"></td>
                 <td th:text="${g.finalExam}"></td>
-                <td th:text="${g.total}" class="text-danger fw-bold"></td>
-                <td th:text="${g.letterGrade}"></td>
-                <td th:text="${g.gpa}"></td>
+                <td>
+                    <span class="fw-bold"
+                          th:text="${g.total}"
+                          th:classappend="${g.total >= 5.5 ? 'text-success' : 'text-danger'}">
+                    </span>
+                </td>
+                <td>
+                    <span class="badge fs-6"
+                          th:text="${g.letterGrade}"
+                          th:classappend="${g.letterGrade == 'A' ? 'bg-success' :
+                                          (g.letterGrade == 'B' ? 'bg-primary' :
+                                          (g.letterGrade == 'C' ? 'bg-info text-dark' :
+                                          (g.letterGrade == 'D' ? 'bg-warning text-dark' : 'bg-danger')))}">
+                    </span>
+                </td>
+                <td class="fw-bold" th:text="${g.gpa}"></td>
             </tr>
             </tbody>
         </table>
+    </div>
+
+    <!-- Tổng kết GPA -->
+    <div th:unless="${#lists.isEmpty(grades)}" class="mt-3 card shadow-sm p-3 d-flex flex-row justify-content-end gap-4 align-items-center">
+        <span class="text-muted">Tổng số môn: <strong th:text="${#lists.size(grades)}"></strong></span>
+        <span class="text-muted">GPA trung bình: <strong class="text-primary fs-5"
+                                                         th:text="${#aggregates.avg(grades.![gpa])}"></strong></span>
     </div>
 </div>
 </body>

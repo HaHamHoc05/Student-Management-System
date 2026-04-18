@@ -1,0 +1,106 @@
+<div th:replace="~{admin/layout :: layout(~{::content})}">
+    <div th:fragment="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h4 class="mb-0 fw-bold">🔐 Quản Lý Tài Khoản</h4>
+                <small class="text-muted">Quản lý tài khoản đăng nhập và phân quyền</small>
+            </div>
+        </div>
+
+        <!-- Thông báo reset thành công -->
+        <div th:if="${param.reset}" class="alert alert-success alert-dismissible fade show" role="alert">
+            ✅ Reset mật khẩu thành công về <strong>123456</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Thống kê nhanh -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card border-danger text-center p-2 shadow-sm">
+                    <small class="text-muted">ADMIN</small>
+                    <h4 class="text-danger fw-bold"
+                        th:text="${accounts.?[role == 'ROLE_ADMIN'].size()}">0</h4>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-success text-center p-2 shadow-sm">
+                    <small class="text-muted">TEACHER</small>
+                    <h4 class="text-success fw-bold"
+                        th:text="${accounts.?[role == 'ROLE_TEACHER'].size()}">0</h4>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-primary text-center p-2 shadow-sm">
+                    <small class="text-muted">STUDENT</small>
+                    <h4 class="text-primary fw-bold"
+                        th:text="${accounts.?[role == 'ROLE_STUDENT'].size()}">0</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <table class="table table-hover mb-0">
+                <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Tên đăng nhập</th>
+                    <th class="text-center">Vai trò</th>
+                    <th class="text-center">Đổi quyền</th>
+                    <th class="text-center">Thao tác</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="acc : ${accounts}" class="align-middle">
+                    <td class="text-muted" th:text="${acc.id}"></td>
+                    <td class="fw-bold" th:text="${acc.username}"></td>
+                    <td class="text-center">
+                        <span th:if="${acc.role == 'ROLE_ADMIN'}"
+                              class="badge bg-danger">👑 ADMIN</span>
+                        <span th:if="${acc.role == 'ROLE_TEACHER'}"
+                              class="badge bg-success">👨‍🏫 TEACHER</span>
+                        <span th:if="${acc.role == 'ROLE_STUDENT'}"
+                              class="badge bg-primary">🎓 STUDENT</span>
+                    </td>
+
+                    <!-- Phân quyền -->
+                    <td class="text-center">
+                        <form th:action="@{/admin/accounts/change-role/{id}(id=${acc.id})}"
+                              method="post" class="d-inline-flex gap-1">
+                            <select name="role" class="form-select form-select-sm" style="width: 140px;">
+                                <option value="ROLE_ADMIN"
+                                        th:selected="${acc.role == 'ROLE_ADMIN'}">ADMIN</option>
+                                <option value="ROLE_TEACHER"
+                                        th:selected="${acc.role == 'ROLE_TEACHER'}">TEACHER</option>
+                                <option value="ROLE_STUDENT"
+                                        th:selected="${acc.role == 'ROLE_STUDENT'}">STUDENT</option>
+                            </select>
+                            <button type="submit" class="btn btn-warning btn-sm">Lưu</button>
+                        </form>
+                    </td>
+
+                    <!-- Reset mật khẩu & Xóa -->
+                    <td class="text-center">
+                        <form th:action="@{/admin/accounts/reset-password/{id}(id=${acc.id})}"
+                              method="post" class="d-inline">
+                            <button type="submit" class="btn btn-outline-secondary btn-sm"
+                                    onclick="return confirm('Reset mật khẩu về 123456?')">
+                                🔄 Reset MK
+                            </button>
+                        </form>
+                        <a th:href="@{/admin/accounts/delete/{id}(id=${acc.id})}"
+                           class="btn btn-outline-danger btn-sm ms-1"
+                           onclick="return confirm('Xóa tài khoản này?')">🗑 Xóa</a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(accounts)}">
+                    <td colspan="5" class="text-center text-muted py-3">Chưa có tài khoản nào</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <small class="text-muted mt-2 d-block">
+            * Mật khẩu mặc định khi reset: <code>123456</code>
+        </small>
+    </div>
+</div>

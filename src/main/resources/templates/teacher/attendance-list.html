@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý Điểm Danh</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-dark bg-success shadow-sm">
+    <div class="container-fluid">
+        <span class="navbar-brand fw-bold">👨‍🏫 TEACHER PORTAL</span>
+        <div class="d-flex gap-2">
+            <a href="/teacher/my-schedule" class="btn btn-outline-light btn-sm">📅 Lịch dạy</a>
+            <form th:action="@{/logout}" method="post" class="d-inline">
+                <button class="btn btn-outline-light btn-sm">Đăng xuất</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h4 class="mb-0 fw-bold">📊 Nhật Ký Điểm Danh</h4>
+            <small class="text-muted">Lịch sử điểm danh tất cả sinh viên</small>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="/teacher/attendance/add" class="btn btn-success btn-sm">+ Điểm danh mới</a>
+            <a href="/teacher/my-schedule" class="btn btn-primary btn-sm">📅 Điểm danh theo lớp</a>
+            <a href="/teacher/home" class="btn btn-secondary btn-sm">⬅ Quay lại</a>
+        </div>
+    </div>
+
+    <!-- Thống kê nhanh -->
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <div class="card border-success text-center p-2 shadow-sm">
+                <h6 class="text-success mb-0">✅ Có mặt</h6>
+                <h4 class="fw-bold text-success"
+                    th:text="${attendances.?[status == 'PRESENT'].size()}">0</h4>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-warning text-center p-2 shadow-sm">
+                <h6 class="text-warning mb-0">📝 Vắng có phép</h6>
+                <h4 class="fw-bold text-warning"
+                    th:text="${attendances.?[status == 'ABSENT_PERMISSION'].size()}">0</h4>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-danger text-center p-2 shadow-sm">
+                <h6 class="text-danger mb-0">❌ Vắng không phép</h6>
+                <h4 class="fw-bold text-danger"
+                    th:text="${attendances.?[status == 'ABSENT_NO_PERMISSION'].size()}">0</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <table class="table table-hover mb-0">
+            <thead class="table-dark">
+            <tr>
+                <th>Ngày</th>
+                <th>Sinh viên</th>
+                <th>Môn học</th>
+                <th class="text-center">Trạng thái</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="a : ${attendances}">
+                <td th:text="${a.date}" class="text-muted"></td>
+                <td th:text="${a.student.fullName}" class="fw-bold"></td>
+                <td th:text="${a.course.courseName}"></td>
+                <td class="text-center">
+                    <!-- Sửa: đủ 3 trạng thái, xóa typo 'Vabgư' cũ -->
+                    <span th:if="${a.status == 'PRESENT'}"
+                          class="badge bg-success">✅ Có mặt</span>
+                    <span th:if="${a.status == 'ABSENT_PERMISSION'}"
+                          class="badge bg-warning text-dark">📝 Vắng có phép</span>
+                    <span th:if="${a.status == 'ABSENT_NO_PERMISSION'}"
+                          class="badge bg-danger">❌ Vắng không phép</span>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(attendances)}">
+                <td colspan="4" class="text-center text-muted py-3">Chưa có dữ liệu điểm danh</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

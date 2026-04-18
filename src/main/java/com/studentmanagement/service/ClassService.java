@@ -19,6 +19,11 @@ public class ClassService {
         return repo.findAll();
     }
 
+    // THÊM MỚI: cần thiết cho edit form
+    public ClassRoom getById(Long id) {
+        return repo.findById(id).orElseThrow(() -> new RuntimeException("Không tìm thấy lớp học: " + id));
+    }
+
     public ClassRoom create(ClassRoom c) {
         return repo.save(c);
     }

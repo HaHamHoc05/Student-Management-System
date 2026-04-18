@@ -19,5 +19,5 @@ public class Account {
     @Column(nullable = false)
     private String password;
 
-    private String role; // Ví dụ: "ROLE_ADMIN", "ROLE_STUDENT"
+    private String role;
 }

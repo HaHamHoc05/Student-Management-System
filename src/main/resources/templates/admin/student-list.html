@@ -1,22 +1,45 @@
 <div th:replace="~{admin/layout :: layout(~{::content})}">
     <div th:fragment="content">
         <div class="d-flex justify-content-between mb-3">
-            <h3>Danh sách Sinh viên</h3>
+            <h4 class="fw-bold">🎓 Danh sách Sinh viên</h4>
             <a href="/admin/students/add" class="btn btn-primary">+ Thêm mới</a>
         </div>
-        <table class="table table-bordered">
-            <thead class="table-dark">
-            <tr><th>Mã SV</th><th>Họ Tên</th><th>Hành động</th></tr>
-            </thead>
-            <tbody>
-            <tr th:each="s : ${students}">
-                <td th:text="${s.studentCode}"></td>
-                <td th:text="${s.fullName}"></td>
-                <td>
-                    <a th:href="@{/admin/students/edit/{id}(id=${s.id})}" class="btn btn-warning btn-sm">Sửa</a>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="card shadow-sm">
+            <table class="table table-bordered mb-0">
+                <thead class="table-dark">
+                <tr>
+                    <th>Mã SV</th>
+                    <th>Họ Tên</th>
+                    <th>Email</th>
+                    <th>Lớp</th>
+                    <th class="text-center">Hành động</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="s : ${students}" class="align-middle">
+                    <td><span class="badge bg-secondary" th:text="${s.studentCode}"></span></td>
+                    <td class="fw-bold" th:text="${s.fullName}"></td>
+                    <td class="text-muted" th:text="${s.email}"></td>
+                    <td>
+                        <span class="badge bg-info text-dark"
+                              th:text="${s.classRoom != null ? s.classRoom.className : 'Chưa có lớp'}"></span>
+                    </td>
+                    <td class="text-center">
+                        <a th:href="@{/admin/students/edit/{id}(id=${s.id})}"
+                           class="btn btn-warning btn-sm">✏️ Sửa</a>
+                        <!-- ĐÃ THÊM: nút Xóa sinh viên (controller đã có, template cũ thiếu) -->
+                        <a th:href="@{/admin/students/delete/{id}(id=${s.id})}"
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('Xóa sinh viên này? Dữ liệu điểm sẽ bị ảnh hưởng!')">
+                            🗑 Xóa
+                        </a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(students)}">
+                    <td colspan="5" class="text-center text-muted py-3">Chưa có sinh viên nào</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>

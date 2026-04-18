@@ -1,8 +1,11 @@
 package com.studentmanagement.controller;
 
+import com.studentmanagement.model.Account;
 import com.studentmanagement.model.Student;
+import com.studentmanagement.repository.AccountRepository;
 import com.studentmanagement.service.ClassService;
 import com.studentmanagement.service.StudentService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -13,10 +16,14 @@ public class StudentController {
 
     private final StudentService service;
     private final ClassService classService;
+    private final AccountRepository accountRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public StudentController(StudentService service, ClassService classService) {
+    public StudentController(StudentService service, ClassService classService, AccountRepository accountRepository, PasswordEncoder passwordEncoder) {
         this.service = service;
         this.classService = classService;
+        this.accountRepository = accountRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // Hiển thị danh sách sinh viên
@@ -34,16 +41,6 @@ public class StudentController {
         return "admin/student-form";
     }
 
-    // Xử lý lưu sinh viên (Cả thêm và sửa)
-    @PostMapping("/save")
-    public String saveStudent(@ModelAttribute("student") Student student) {
-        if (student.getId() != null) {
-            service.update(student.getId(), student);
-        } else {
-            service.create(student);
-        }
-        return "redirect:/admin/students";
-    }
 
     // Hiển thị form sửa
     @GetMapping("/edit/{id}")
@@ -57,6 +54,23 @@ public class StudentController {
     @GetMapping("/delete/{id}")
     public String deleteStudent(@PathVariable Long id) {
         service.delete(id);
+        return "redirect:/admin/students";
+    }
+
+
+
+    @PostMapping("/save")
+    public String saveStudent(@ModelAttribute("student") Student student) {
+        service.create(student);
+
+        // Tự động tạo Account nếu chưa tồn tại
+        if (!accountRepository.existsByUsername(student.getStudentCode())) {
+            Account acc = new Account();
+            acc.setUsername(student.getStudentCode());
+            acc.setPassword(passwordEncoder.encode("123456"));
+            acc.setRole("ROLE_STUDENT");
+            accountRepository.save(acc);
+        }
         return "redirect:/admin/students";
     }
 }
