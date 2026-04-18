@@ -1,33 +1,44 @@
 package com.studentmanagement.controller;
 
-import com.studentmanagement.model.Grade;
+import com.studentmanagement.dto.GradeCreateDTO;
+import com.studentmanagement.service.CourseService;
 import com.studentmanagement.service.GradeService;
+import com.studentmanagement.service.StudentService;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-@RestController
-@RequestMapping("/grades")
+@Controller
+@RequestMapping("/teacher/grades")
 public class GradeController {
 
-    private final GradeService service;
+    private final GradeService gradeService;
+    private final StudentService studentService;
+    private final CourseService courseService;
 
-    public GradeController(GradeService service) {
-        this.service = service;
-    }
-
-    @PostMapping
-    public Grade create(@RequestBody Grade grade) {
-        return service.create(grade);
-    }
-
-    @GetMapping("/student/{studentId}")
-    public List<Grade> getByStudent(@PathVariable Long studentId) {
-        return service.getByStudent(studentId);
+    public GradeController(GradeService gradeService, StudentService studentService, CourseService courseService) {
+        this.gradeService = gradeService;
+        this.studentService = studentService;
+        this.courseService = courseService;
     }
 
     @GetMapping
-    public List<Grade> getAll() {
-        return service.getAll();
+    public String listAllGrades(Model model) {
+        model.addAttribute("grades", gradeService.getAll());
+        return "teacher/grade-list";
+    }
+
+    @GetMapping("/add")
+    public String showGradeForm(Model model) {
+        model.addAttribute("gradeDTO", new GradeCreateDTO());
+        model.addAttribute("students", studentService.getAll());
+        model.addAttribute("courses", courseService.getAll());
+        return "teacher/grade-form";
+    }
+
+    @PostMapping("/save")
+    public String saveGrade(@ModelAttribute("gradeDTO") GradeCreateDTO dto) {
+        gradeService.createFromDTO(dto);
+        return "redirect:/teacher/grades";
     }
 }

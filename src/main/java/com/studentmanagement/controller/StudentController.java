@@ -1,58 +1,62 @@
 package com.studentmanagement.controller;
 
-import com.studentmanagement.dto.GradeDTO;
 import com.studentmanagement.model.Student;
-import com.studentmanagement.service.GradeService;
+import com.studentmanagement.service.ClassService;
 import com.studentmanagement.service.StudentService;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-@RestController
-@RequestMapping("/students")
+@Controller
+@RequestMapping("/admin/students") // Chỉ Admin mới được vào đây
 public class StudentController {
 
     private final StudentService service;
-    private final GradeService gradeService;
+    private final ClassService classService;
 
-    public StudentController(StudentService service, GradeService gradeService) {
+    public StudentController(StudentService service, ClassService classService) {
         this.service = service;
-        this.gradeService = gradeService;
+        this.classService = classService;
     }
 
-    // GET ALL
+    // Hiển thị danh sách sinh viên
     @GetMapping
-    public List<Student> getAll() {
-        return service.getAll();
+    public String listStudents(Model model) {
+        model.addAttribute("students", service.getAll());
+        return "admin/student-list"; // Trỏ tới templates/admin/student-list.html
     }
 
-    // GET BY ID
-    @GetMapping("/{id}")
-    public Student getById(@PathVariable Long id) {
-        return service.getById(id);
+    // Hiển thị form thêm mới
+    @GetMapping("/add")
+    public String showAddForm(Model model) {
+        model.addAttribute("student", new Student());
+        model.addAttribute("classes", classService.getAll()); // Để chọn lớp
+        return "admin/student-form";
     }
 
-    // CREATE
-    @PostMapping
-    public Student create(@RequestBody Student student) {
-        return service.create(student);
+    // Xử lý lưu sinh viên (Cả thêm và sửa)
+    @PostMapping("/save")
+    public String saveStudent(@ModelAttribute("student") Student student) {
+        if (student.getId() != null) {
+            service.update(student.getId(), student);
+        } else {
+            service.create(student);
+        }
+        return "redirect:/admin/students";
     }
 
-    // UPDATE
-    @PutMapping("/{id}")
-    public Student update(@PathVariable Long id, @RequestBody Student student) {
-        return service.update(id, student);
+    // Hiển thị form sửa
+    @GetMapping("/edit/{id}")
+    public String showEditForm(@PathVariable Long id, Model model) {
+        model.addAttribute("student", service.getById(id));
+        model.addAttribute("classes", classService.getAll());
+        return "admin/student-form";
     }
 
-    // DELETE
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    // Xóa sinh viên
+    @GetMapping("/delete/{id}")
+    public String deleteStudent(@PathVariable Long id) {
         service.delete(id);
-    }
-
-    // 🎓 Student xem điểm của mình
-    @GetMapping("/{studentId}/grades")
-    public List<GradeDTO> getStudentGrades(@PathVariable Long studentId) {
-        return gradeService.getGradesByStudent(studentId);
+        return "redirect:/admin/students";
     }
 }

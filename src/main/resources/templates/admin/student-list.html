@@ -1,0 +1,22 @@
+<div th:replace="~{admin/layout :: layout(~{::content})}">
+    <div th:fragment="content">
+        <div class="d-flex justify-content-between mb-3">
+            <h3>Danh sách Sinh viên</h3>
+            <a href="/admin/students/add" class="btn btn-primary">+ Thêm mới</a>
+        </div>
+        <table class="table table-bordered">
+            <thead class="table-dark">
+            <tr><th>Mã SV</th><th>Họ Tên</th><th>Hành động</th></tr>
+            </thead>
+            <tbody>
+            <tr th:each="s : ${students}">
+                <td th:text="${s.studentCode}"></td>
+                <td th:text="${s.fullName}"></td>
+                <td>
+                    <a th:href="@{/admin/students/edit/{id}(id=${s.id})}" class="btn btn-warning btn-sm">Sửa</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

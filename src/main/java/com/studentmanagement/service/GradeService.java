@@ -93,4 +93,23 @@ public class GradeService {
 
         return create(grade);
     }
+
+    public List<GradeDTO> getMyGrades(String studentCode) {
+        List<Grade> grades = repo.findByStudent_StudentCode(studentCode);
+
+        return grades.stream()
+                .map(grade -> GradeDTO.builder()
+                        .gradeId(grade.getId())
+                        .courseName(grade.getCourse().getCourseName())
+                        .courseCode(grade.getCourse().getCourseCode())
+                        .credit(grade.getCourse().getCredit())
+                        .midTerm(grade.getMidTerm())
+                        .finalExam(grade.getFinalExam())
+                        .total(grade.getTotal())
+                        .letterGrade(grade.getLetterGrade())
+                        .gpa(grade.getGpa())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
 }

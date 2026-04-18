@@ -2,12 +2,12 @@ package com.studentmanagement.controller;
 
 import com.studentmanagement.model.ClassRoom;
 import com.studentmanagement.service.ClassService;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-@RestController
-@RequestMapping("/classes")
+@Controller
+@RequestMapping("/admin/classes")
 public class ClassController {
 
     private final ClassService service;
@@ -17,22 +17,20 @@ public class ClassController {
     }
 
     @GetMapping
-    public List<ClassRoom> getAll() {
-        return service.getAll();
+    public String listClasses(Model model) {
+        model.addAttribute("classes", service.getAll());
+        return "admin/class-list";
     }
 
-    @PostMapping
-    public ClassRoom create(@RequestBody ClassRoom c) {
-        return service.create(c);
+    @PostMapping("/save")
+    public String saveClass(@ModelAttribute("classroom") ClassRoom classRoom) {
+        service.create(classRoom);
+        return "redirect:/admin/classes";
     }
 
-    @PutMapping("/{id}")
-    public ClassRoom update(@PathVariable Long id, @RequestBody ClassRoom c) {
-        return service.update(id, c);
-    }
-
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    @GetMapping("/delete/{id}")
+    public String deleteClass(@PathVariable Long id) {
         service.delete(id);
+        return "redirect:/admin/classes";
     }
 }
